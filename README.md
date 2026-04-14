@@ -1,6 +1,6 @@
 # SAM3-I: Segment Anything with Instructions
 
-Note: The code is updated to the latest version. The improved paper is coming soon and will be updated on arXiv in mid-April.
+Official repository for the paper "SAM3-I: Segment Anything with Instructions".
 
 ## Directory Structure
 
@@ -184,13 +184,20 @@ CHECKPOINT=/path/to/checkpoint.pt \
 
 ---
 
+## Dual-Panel Instruction Annotation Tool
+
+We release our [Dual-Panel Instruction Annotation Tool](https://github.com/debby-0527/SAM3-I/blob/main/web_annotation_tool/README.md), a dedicated web-based interface used to support challenging instruction grounding scenarios, in particular the one-to-many setting.
+
+
+---
+
 ## Citation
 
 ```bibtex
-@article{li2025sam3,
-  title={SAM3-I: Segment Anything with Instructions},
-  author={Li, Jingjing and Feng, Yue and Guo, Yuchen and Huang, Jincai and Piao, Yongri and Bi, Qi and Zhang, Miao and Zhao, Xiaoqi and Chen, Qiang and Zou, Shihao and others},
-  journal={arXiv preprint arXiv:2512.04585},
-  year={2025}
+@inproceedings{li2026sam3i,
+title={SAM3-I: Segment Anything with Instructions},
+author={Li, Jingjing and Feng, Yue and Guo, Yuchen and Huang, Jincai and Ji, Wei and Bi, Qi and Piao, Yongri and Zhang, Miao and Zhao, Xiaoqi and Chen, Qiang and Zou, Shihao and Lu, Huchuan and Cheng, Li},
+booktitle={The 64th Annual Meeting of the Association for Computational Linguistics},
+year={2026}
 }
 ```
