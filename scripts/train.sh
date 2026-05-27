@@ -25,7 +25,8 @@ CONFIG="${CONFIG:-configs/sam3i/sam3i_1-1}"
 
 # Distributed training config
 NNODES="${NNODES:-1}"                        # Number of nodes
-NPROC="${NPROC:-8}"                          # GPUs per node
+#NPROC="${NPROC:-8}"                          # GPUs per node
+NPROC="${NPROC:-1}"                          # GPUs per node
 NODE_RANK="${NODE_RANK:-0}"                  # Current node rank (0-based)
 MASTER_ADDR="${MASTER_ADDR:-127.0.0.1}"      # Master node address
 MASTER_PORT="${MASTER_PORT:-29501}"          # Communication port

@@ -18,12 +18,12 @@
 paths:
   # Root directory containing per-dataset annotation JSON files
   # e.g. sam3i_datasets_root/RefCOCO/sam3i_train.json
-  sam3i_datasets_root: ./sam3i_datasets
+  sam3i_datasets_root: D:/cake/SAM/sam3i_datasets_root
   # Root directory containing per-dataset image folders.
   # Images do NOT have to reside under sam3i_datasets_root;
   # set this to any path where the actual images are stored.
   # e.g. sam3i_image_root/RefCOCO/<image files>
-  sam3i_image_root: ${paths.sam3i_datasets_root}
+  sam3i_image_root: D:/cake/SAM/sam3i_image_root
 
   # -----------------------------------------------------------------------
   # Per-dataset image folder mapping.
@@ -50,21 +50,22 @@ paths:
   #   img_folder_MMR:         /data/coco2017/
   # -----------------------------------------------------------------------
 
-  # -- COCO 2014 datasets (RefCOCO family + Ref-ZOM) --
-  img_folder_RefCOCO:     ${paths.sam3i_image_root}/RefCOCO/
-  img_folder_RefCOCOplus: ${paths.sam3i_image_root}/RefCOCOplus/
-  img_folder_RefCOCOg:    ${paths.sam3i_image_root}/RefCOCOg/
-  img_folder_gRefCOCO:    ${paths.sam3i_image_root}/gRefCOCO/
-  img_folder_RefZOM:      ${paths.sam3i_image_root}/Ref-ZOM/
-
-  # -- COCO 2017 datasets (HMPL family + MMR) --
-  img_folder_HMPL_1to1:   ${paths.sam3i_image_root}/HMPL-Instruct_1to1/
-  img_folder_HMPL_1toN:   ${paths.sam3i_image_root}/HMPL-Instruct_1toN/
-  img_folder_HMPL_1toAll: ${paths.sam3i_image_root}/HMPL-Instruct_1toAll/
-  img_folder_MMR:         ${paths.sam3i_image_root}/MMR/
+#  # -- COCO 2014 datasets (RefCOCO family + Ref-ZOM) --
+#  img_folder_RefCOCO:     D:/cake/SAM/sam3i_image_root/data/coco2014
+#  img_folder_RefCOCOplus: D:/cake/SAM/sam3i_image_root/data/coco2014
+#  img_folder_RefCOCOg:    D:/cake/SAM/sam3i_image_root/data/coco2014
+#  img_folder_gRefCOCO:    D:/cake/SAM/sam3i_image_root/data/coco2014
+#  img_folder_RefZOM:      D:/cake/SAM/sam3i_image_root/data/coco2014
+#
+#  # -- COCO 2017 datasets (HMPL family + MMR) --
+#  img_folder_HMPL_1to1:   D:/cake/SAM/sam3i_image_root/data/coco2017
+#  img_folder_HMPL_1toN:   D:/cake/SAM/sam3i_image_root/data/coco2017
+#  img_folder_HMPL_1toAll: D:/cake/SAM/sam3i_image_root/data/coco2017
+#  img_folder_MMR:         D:/cake/SAM/sam3i_image_root/data/coco2017
 
   # -- Standalone --
-  img_folder_ReasonSeg:   ${paths.sam3i_image_root}/ReasonSeg/
+#  img_folder_ReasonSeg:   D:/cake/SAM/sam3i_image_root/data/ReasonSeg
+  img_folder_BIM:   D:/cake/SAM/sam3i_image_root/data/BIM
 
   # Training log and checkpoint directory (overridden per stage)
   experiment_log_dir: ./outputs/logs/default
@@ -284,8 +285,12 @@ trainer:
   gradient_accumulation_steps: ${scratch.gradient_accumulation_steps}
   inst_stage: "1_1"  # Overridden per stage
 
+#  distributed:
+#    backend: nccl
+#    find_unused_parameters: True
+#    gradient_as_bucket_view: True
   distributed:
-    backend: nccl
+    backend: gloo
     find_unused_parameters: True
     gradient_as_bucket_view: True
 
@@ -310,116 +315,116 @@ trainer:
             max_val_queries: 50000
             training: true
             use_caching: False
-            img_folder: ${paths.img_folder_RefCOCOg}
-            ann_file: ${paths.sam3i_datasets_root}/RefCOCOg/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_gRefCOCO}
-            ann_file: ${paths.sam3i_datasets_root}/gRefCOCO/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_MMR}
-            ann_file: ${paths.sam3i_datasets_root}/MMR/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_RefCOCOplus}
-            ann_file: ${paths.sam3i_datasets_root}/RefCOCOplus/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_RefCOCO}
-            ann_file: ${paths.sam3i_datasets_root}/RefCOCO/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_RefZOM}
-            ann_file: ${paths.sam3i_datasets_root}/Ref-ZOM/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_HMPL_1to1}
-            ann_file: ${paths.sam3i_datasets_root}/HMPL-Instruct_1to1/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_HMPL_1toAll}
-            ann_file: ${paths.sam3i_datasets_root}/HMPL-Instruct_1toAll/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_HMPL_1toN}
-            ann_file: ${paths.sam3i_datasets_root}/HMPL-Instruct_1toN/sam3i_train.json
-          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
-            limit_ids: ${sam3i_datasets_train.num_images}
-            transforms: ${sam3i_datasets_train.train_transforms}
-            load_segmentation: ${scratch.enable_segmentation}
-            max_ann_per_img: 500000
-            multiplier: 1
-            max_train_queries: 50000
-            max_val_queries: 50000
-            training: true
-            use_caching: False
-            img_folder: ${paths.img_folder_ReasonSeg}
-            ann_file: ${paths.sam3i_datasets_root}/ReasonSeg/sam3i_train.json
+            img_folder: D:/cake/SAM/sam3i_image_root/data/BIM
+            ann_file: D:/cake/SAM/sam3i_datasets_root/BIM/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2014
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/gRefCOCO/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2014
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/RefCOCO/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2014
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/RefCOCOg/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2014
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/RefCOCOplus/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2014
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/Ref-ZOM/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2017
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/HMPL-Instruct_1to1/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2017
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/HMPL-Instruct_1toAll/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2017
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/HMPL-Instruct_1toN/sam3i_train.json
+#          - _target_: sam3.train.data.sam3_image_dataset.Sam3ImageDataset
+#            limit_ids: ${sam3i_datasets_train.num_images}
+#            transforms: ${sam3i_datasets_train.train_transforms}
+#            load_segmentation: ${scratch.enable_segmentation}
+#            max_ann_per_img: 500000
+#            multiplier: 1
+#            max_train_queries: 50000
+#            max_val_queries: 50000
+#            training: true
+#            use_caching: False
+#            img_folder: D:/cake/SAM/sam3i_image_root/data/coco2017
+#            ann_file: D:/cake/SAM/sam3i_datasets_root/MMR/sam3i_train.json
       shuffle: True
       batch_size: ${scratch.train_batch_size}
       num_workers: ${scratch.num_train_workers}
@@ -440,8 +445,8 @@ trainer:
               include_negatives: true
               category_chunk_size: 2
               _partial_: true
-            img_folder: ${paths.img_folder_gRefCOCO}
-            ann_file: ${paths.sam3i_datasets_root}/gRefCOCO/sam3i_val.json
+            img_folder: D:/cake/SAM/sam3i_image_root/data/BIM
+            ann_file: D:/cake/SAM/sam3i_datasets_root/BIM/sam3i_val.json
             transforms: ${sam3i_datasets_train.val_transforms}
             max_ann_per_img: 100000
             multiplier: 1
@@ -456,6 +461,7 @@ trainer:
   model:
     _target_: sam3.model_builder.build_sam3_image_model
     bpe_path: ${paths.bpe_path}
+    checkpoint_path: D:/cake/SAM/checkpoint/checkpoint.pt
     # checkpoint_path: null  # If not specified, base weights are downloaded from HuggingFace
     eval_mode: false
     inst_stage: ${trainer.inst_stage}
@@ -481,7 +487,7 @@ trainer:
           pred_file_evaluators:
             - _target_: sam3.eval.coco_eval_offline.CocoEvaluatorOfflineWithPredFileEvaluators
               gt_path:
-                - ${paths.sam3i_datasets_root}/gRefCOCO/sam3i_val.json
+                - D:/cake/SAM/sam3i_datasets_root/BIM/sam3i_val.json
               tide: False
               iou_type: "bbox"
 
@@ -562,7 +568,8 @@ trainer:
 # ============================================================================
 launcher:
   num_nodes: 1
-  gpus_per_node: 8
+#  gpus_per_node: 8
+  gpus_per_node: 1
   experiment_log_dir: ${paths.experiment_log_dir}
   multiprocessing_context: forkserver
 
@@ -583,13 +590,14 @@ submitit:
 # Available Dataset Supercategories
 # ============================================================================
 all_sam3i_datasets_supercategories:
-  - gRefCOCO
-  - MMR
-  - HMPL-Instruct_1to1
-  - HMPL-Instruct_1toAll
-  - HMPL-Instruct_1toN
-  - ReasonSeg
-  - Ref-ZOM
-  - RefCOCO
-  - RefCOCOg
-  - RefCOCOplus
+#  - gRefCOCO
+#  - MMR
+#  - HMPL-Instruct_1to1
+#  - HMPL-Instruct_1toAll
+#  - HMPL-Instruct_1toN
+#  - ReasonSeg
+#  - Ref-ZOM
+#  - RefCOCO
+#  - RefCOCOg
+#  - RefCOCOplus
+  - BIM

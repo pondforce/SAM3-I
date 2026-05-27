@@ -15,7 +15,8 @@ paths:
 
 # Stage 1-1 uses a small number of images for debug training (set to null to use all)
 sam3i_datasets_train:
-  num_images: 8
+#  num_images: 8
+  num_images: null
 
 # Trainer overrides
 trainer:

@@ -301,8 +301,19 @@ class Trainer:
         else:
             raise ValueError(f"Unsupported accelerator: {accelerator}")
 
+    ####
     def _setup_ddp_distributed_training(self, distributed_conf, accelerator):
+
         assert isinstance(self.model, torch.nn.Module)
+
+        world_size = int(os.environ.get("WORLD_SIZE", "1"))
+
+        if world_size <= 1:
+            logging.info("Single GPU detected to DDP disabled")
+            self.ddp_enabled = False
+            return
+
+        self.ddp_enabled = True
 
         self.model = nn.parallel.DistributedDataParallel(
             self.model,
@@ -311,18 +322,29 @@ class Trainer:
             gradient_as_bucket_view=distributed_conf.gradient_as_bucket_view,
             static_graph=distributed_conf.static_graph,
         )
-        if distributed_conf.comms_dtype is not None:  # noqa
-            from torch.distributed.algorithms import ddp_comm_hooks
 
-            amp_type = get_amp_type(distributed_conf.comms_dtype)
-            if amp_type == torch.bfloat16:
-                hook = ddp_comm_hooks.default_hooks.bf16_compress_hook
-                logging.info("Enabling bfloat16 grad communication")
-            else:
-                hook = ddp_comm_hooks.default_hooks.fp16_compress_hook
-                logging.info("Enabling fp16 grad communication")
-            process_group = None
-            self.model.register_comm_hook(process_group, hook)
+    # def _setup_ddp_distributed_training(self, distributed_conf, accelerator):
+    #     assert isinstance(self.model, torch.nn.Module)
+    #
+    #     self.model = nn.parallel.DistributedDataParallel(
+    #         self.model,
+    #         device_ids=[self.local_rank] if accelerator == "cuda" else [],
+    #         find_unused_parameters=distributed_conf.find_unused_parameters,
+    #         gradient_as_bucket_view=distributed_conf.gradient_as_bucket_view,
+    #         static_graph=distributed_conf.static_graph,
+    #     )
+    #     if distributed_conf.comms_dtype is not None:  # noqa
+    #         from torch.distributed.algorithms import ddp_comm_hooks
+    #
+    #         amp_type = get_amp_type(distributed_conf.comms_dtype)
+    #         if amp_type == torch.bfloat16:
+    #             hook = ddp_comm_hooks.default_hooks.bf16_compress_hook
+    #             logging.info("Enabling bfloat16 grad communication")
+    #         else:
+    #             hook = ddp_comm_hooks.default_hooks.fp16_compress_hook
+    #             logging.info("Enabling fp16 grad communication")
+    #         process_group = None
+    #         self.model.register_comm_hook(process_group, hook)
 
     def _move_to_device(self):
         logging.info(
